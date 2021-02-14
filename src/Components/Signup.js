@@ -1,18 +1,49 @@
-import { useState } from "react";
-import useSignUpForm from '../CustomHooks.js';
+import { useState, useEffect } from "react";
 import React from 'react';
 
 const Signup = () =>  {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  const {inputs, handleInputChange, handleSubmit} = useSignUpForm();
-  const [userInput, setUserInput] = useState("");
-                    // useSignUpForm();
+  const [loading, setLoading] = useState("");
+  const [inputs, setInputs] = useState({});
+  const [result, setResult] = useState({});
 
-  // var useAsynchFormSubmission = () => {
-  //     return null;
+    async function postFormFetch() {
+
+      const settings = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        }
+    };
+      try {
+        setLoading("true");
+        const response = await fetch(
+          `http://127.0.0.1:8080/signup`, settings
+        );
+        const json = await response.json();
+    if (response.status !== 200) throw Error(json.message);
+        return json;
+    } catch(error) {
+      alert(error);
+      setLoading("null");
+    }
+  }
+
+  useEffect(() => {
+    postFormFetch();
+  }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+   postFormFetch();
+  }
+
+  const handleInputChange = (event) => {
+    event.persist();
+    setInputs(inputs => ({...inputs, [event.target.name]:
+      event.target.value }));
+  }
   
-  // }
 
   return(
     
